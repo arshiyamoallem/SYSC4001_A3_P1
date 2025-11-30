@@ -5,8 +5,8 @@
  * 
  */
 
-#ifndef INTERRUPTS_HPP_
-#define INTERRUPTS_HPP_
+#ifndef INTERRUPTS_101182048_101324189_HPP_
+#define INTERRUPTS_101182048_101324189_HPP_
 
 #include<iostream>
 #include<fstream>
@@ -65,6 +65,9 @@ struct PCB{
     enum states     state;
     unsigned int    io_freq;
     unsigned int    io_duration;
+
+    // added for to make code easier
+    int             io_termination_time;
 };
 
 //------------------------------------HELPER FUNCTIONS FOR THE SIMULATOR------------------------------
@@ -269,7 +272,10 @@ PCB add_process(std::vector<std::string> tokens) {
     process.start_time = -1;
     process.partition_number = -1;
     process.state = NOT_ASSIGNED;
-
+    
+    // added PCB vars
+    process.io_termination_time = -1;
+    
     return process;
 }
 
