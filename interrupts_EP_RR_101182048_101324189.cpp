@@ -154,25 +154,25 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
                 PCB top = ready_queue.front(); // highest priority process
                 
                 if (top.PID < running.PID) {
-                states old_state = running.state;
-                running.state = READY;
-                
-                execution_status += print_exec_status(current_time, running.PID, old_state, READY);
-                
-                ready_queue.push_back(running);
-                sync_queue(job_list, running);
-                EP(ready_queue);
+                    states old_state = running.state;
+                    running.state = READY;
+                    
+                    execution_status += print_exec_status(current_time, running.PID, old_state, READY);
+                    
+                    ready_queue.push_back(running);
+                    sync_queue(job_list, running);
+                    EP(ready_queue);
 
-                PCB p_next = ready_queue.front();
-                ready_queue.erase(ready_queue.begin());
-                
-                states old_state_p_next = p_next.state;
-                running = p_next;
-                running.state = RUNNING;
-                execution_status += print_exec_status(current_time, running.PID, old_state_p_next, RUNNING);
-                sync_queue(job_list, running);
+                    PCB p_next = ready_queue.front();
+                    ready_queue.erase(ready_queue.begin());
+                    
+                    states old_state_p_next = p_next.state;
+                    running = p_next;
+                    running.state = RUNNING;
+                    execution_status += print_exec_status(current_time, running.PID, old_state_p_next, RUNNING);
+                    sync_queue(job_list, running);
 
-                time_slice = 0; // reset RR quantum timer
+                    time_slice = 0; // reset RR quantum timer
                 }
             } 
             // checl if quantum has expired
