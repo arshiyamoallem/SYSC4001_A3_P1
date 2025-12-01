@@ -147,28 +147,27 @@ std::tuple<std::string /* add std::string for bonus mark */ > run_simulation(std
             running.remaining_time--;
 
             // check if process has an I/O request
-            if (running.io_freq > 0 && running.remaining_time > 0 && (running.processing_time - running.remaining_time) > 0 && (running.processing_time - running.remaining_time) % running.io_freq == 0) {
+            if (running.io_freq > 0 && running.remaining_time > 0) {
+                unsigned int time_processed = running.processing_time - running.remaining_time;
                 states old_state = running.state;
-                running.state = WAITING;
-                
-                execution_status += print_exec_status(current_time, running.PID, old_state, WAITING);
+                if (time_processed > 0 && time_processed % running.io_freq == 0) {
+                    running.state = WAITING;
+                    execution_status += print_exec_status(current_time, running.PID, old_state, WAITING);
 
-                PCB temp = running;
-                temp.io_termination_time = current_time + running.io_duration;
-
-                wait_queue.push_back(temp);
-                sync_queue(job_list, temp);
-                idle_CPU(running);
+                    PCB temp = running;
+                    temp.io_termination_time = current_time + running.io_duration;
+                    wait_queue.push_back(temp);
+                    sync_queue(job_list, temp);
+                    idle_CPU(running);
+                    current_time++;
+                }
             }
 
             // check if process has been terminated
             else if (running.remaining_time == 0) {
-                states old_state = running.state;
-                running.state = TERMINATED;
+                states old_state = running.state; // get the old state
+                terminate_process(running, job_list);
                 execution_status += print_exec_status(current_time, running.PID, old_state, TERMINATED);
-                sync_queue(job_list, running);
-                free_memory(running);
-                idle_CPU(running);
             } 
 
         }
